@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: db
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - career_sync_pg_data:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:5432
+
+
+volumes:
+  career_sync_pg_data:
