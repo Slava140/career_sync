@@ -1,3 +1,21 @@
-from users.fastapi_users_instance import fastapi_users_instance
+from typing import Annotated
 
-current_active_user = fastapi_users_instance.current_user(active=True)
+from fastapi import Depends
+
+from dependecies import DBSessionDep
+from users.dao import UserDAO
+from users.services import UserService
+
+
+async def get_user_dao(db_session: DBSessionDep):
+    return UserDAO(db_session)
+
+
+UserDAODep = Annotated[UserDAO, Depends(get_user_dao)]
+
+
+async def get_user_service(user_dao: UserDAODep):
+    return UserService(user_dao)
+
+
+UserServiceDep = Annotated[UserService, Depends(get_user_service)]

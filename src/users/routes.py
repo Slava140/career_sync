@@ -1,31 +1,14 @@
 from fastapi import APIRouter
 
-from users.fastapi_users_instance import fastapi_users_instance, auth_backend
-from users.schemas import UserRead, UserCreate, UserUpdate
+from users.schemas import UserResponse, RegisterRequestBody, NonExistentUser
+from users.dependecies import UserServiceDep
+
+router = APIRouter(prefix='/auth')
 
 
-router = APIRouter()
+@router.post('/register')
+async def register(body: RegisterRequestBody, user_service: UserServiceDep) -> UserResponse:
+    non_existing_user_schema = NonExistentUser.model_validate(body)
+    existing_user_schema = await user_service.register(non_existing_user_schema)
 
-router.include_router(
-    fastapi_users_instance.get_auth_router(auth_backend), prefix="/auth/jwt", tags=["auth"]
-)
-router.include_router(
-    fastapi_users_instance.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-)
-router.include_router(
-    fastapi_users_instance.get_reset_password_router(),
-    prefix="/auth",
-    tags=["auth"],
-)
-router.include_router(
-    fastapi_users_instance.get_verify_router(UserRead),
-    prefix="/auth",
-    tags=["auth"],
-)
-router.include_router(
-    fastapi_users_instance.get_users_router(UserRead, UserUpdate),
-    prefix="/users",
-    tags=["users"],
-)
+    return UserResponse.model_validate(existing_user_schema)

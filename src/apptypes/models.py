@@ -7,6 +7,7 @@ from sqlalchemy.orm import mapped_column
 
 sql_utc_now = text("timezone('utc', now())")
 
+str_unique = Annotated[str, mapped_column(String(), unique=True)]
 str_255 = Annotated[str, 255]
 str_255_unique = Annotated[str, mapped_column(String(255), unique=True)]
 

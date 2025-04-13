@@ -1,4 +1,5 @@
 import re
+from datetime import datetime
 from typing import Annotated
 
 from annotated_types import MaxLen
@@ -24,9 +25,15 @@ def password_validator(value: str) -> str:
     return value
 
 
-NonEmptyStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
-Str255 = Annotated[NonEmptyStr, MaxLen(255)]
-Str500 = Annotated[NonEmptyStr, MaxLen(500)]
+def datetime_validator(value: datetime) -> datetime:
+    if not value.tzinfo:
+        raise ValueError('Does not have timezone info')
+    return value
 
-RawPassword = Secret[Annotated[str, AfterValidator(password_validator)]]
-HashedPassword = str
+
+NonEmptyStr = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+NonEmptyStr255 = Annotated[NonEmptyStr, MaxLen(255)]
+NonEmptyStr500 = Annotated[NonEmptyStr, MaxLen(500)]
+
+PasswordStr = Secret[Annotated[str, AfterValidator(password_validator)]]
+DateTimeWithTimezone = Annotated[datetime, AfterValidator(datetime_validator)]

@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
+    APP_HOST: str
+    APP_PORT: int
+
     JWT_SECRET: str
     JWT_LIFETIME: int
 

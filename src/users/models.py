@@ -1,17 +1,19 @@
-from fastapi import Depends
-from fastapi_users.db import SQLAlchemyBaseUserTable
-from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.sql import expression
 
-from apptypes.models import pk_int
+from apptypes.models import pk_int, str_255, str_255_unique, created_at, updated_at
 from database import Base
-from dependecies import get_async_db_session
 
 
-class User(SQLAlchemyBaseUserTable[int], Base):
+class User(Base):
+    __tablename__ = 'users'
+
     id: Mapped[pk_int]
-
-
-async def get_user_db(db_session: AsyncSession = Depends(get_async_db_session)):
-    yield SQLAlchemyUserDatabase(db_session, User)
+    email: Mapped[str_255_unique]
+    hashed_password: Mapped[str_255]
+    first_name: Mapped[str_255]
+    last_name: Mapped[str_255]
+    patronymic: Mapped[str_255 | None]
+    is_verified: Mapped[bool] = mapped_column(server_default=expression.false())
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
