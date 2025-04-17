@@ -1,6 +1,6 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, SecretStr
 
-from apptypes.schemas import PasswordStr, NonEmptyStr255, DateTimeWithTimezone
+from apptypes.schemas import PasswordStr, NonEmptyStr255, DateTimeWithTimezone, NonEmptyStr
 
 
 class UserResponse(BaseModel):
@@ -13,6 +13,12 @@ class UserResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class JWTWithUserResponse(BaseModel):
+    access_token: NonEmptyStr
+    token_type: NonEmptyStr = 'bearer'
+    user: UserResponse
+
+
 class RegisterRequestBody(BaseModel):
     email: EmailStr
     password: PasswordStr
@@ -21,6 +27,11 @@ class RegisterRequestBody(BaseModel):
     patronymic: NonEmptyStr255 | None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class LoginRequestBody(BaseModel):
+    email: EmailStr
+    password: SecretStr  # Не использую PasswordStr чтобы НЕ сообщать дополнительную информацию о пароле
 
 
 class ExistingUser(BaseModel):

@@ -1,8 +1,8 @@
 import uvicorn
 
 from app import app
-from config import settings
+from config.app import app_settings
 
 
 if __name__ == '__main__':
-    uvicorn.run(app=app, host=settings.APP_HOST, port=settings.APP_PORT)
+    uvicorn.run(app=app, host=app_settings.HOST, port=app_settings.PORT)

@@ -1,11 +1,11 @@
 from sqlalchemy import String
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, async_scoped_session
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, registry
 
 from apptypes.models import str_255
-from config import settings
+from config.database import db_settings
 
-engine = create_async_engine(settings.database_url_asyncpg, echo=True)
+engine = create_async_engine(db_settings.database_url_asyncpg, echo=True)
 session_maker = async_sessionmaker(engine, autoflush=False, expire_on_commit=False)
 
 

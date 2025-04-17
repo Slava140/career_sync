@@ -5,10 +5,36 @@ services:
     environment:
       POSTGRES_PASSWORD: ${DB_PASS}
     volumes:
-      - career_sync_pg_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     ports:
       - ${DB_PORT}:5432
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - redis_data:/redis_data
+    command: >
+      redis-server  --port 6379
+                    --save 20 1
+                    --loglevel warning
+                    --requirepass ${REDIS_PASS}
+
+  worker:
+    container_name: worker
+    build:
+      context: .
+    environment:
+      PYTHONPATH: 'src'
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    command: arq src.worker.WorkerSettings
+    depends_on:
+      - redis
+
 
 volumes:
-  career_sync_pg_data:
+  pg_data:
+  redis_data:
